@@ -1,0 +1,17 @@
+{
+  "type" : "module",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.47.1"
+  },
+  "name": "gpt_chatbot",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "dev": "nodemon script.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
