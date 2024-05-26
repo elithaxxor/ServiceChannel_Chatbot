@@ -1,53 +1,56 @@
-import { OpenAI, Configuration, OpenAIApi  } from "openai";
-import { config } from "dotenv";
-//import { Configuration, OpenAIApi } from "openai";
 
-////////////////////////// 1.0 - Basic Chatbot Init AI //////////////////////////////////////
-// #1- TO CREATE PACKAGE.JSON: npm init -y
-// #2- TO DEPENDENCIES ENV: nmp i dotenv
-// #3- TO DEPENDENCIES: npm install openai
-// #4- SET JSON SCRIPT IN [PACKAGE.JSON]: change test: "echo ..." to dev "node script.js"
-// #5- SET ENV IN [PACKAGE.JSON]: ADD "type" : "module" to the top of the JSON
+// [NOTE] - THE SERVER COMMUNICATES 2 WAYS:
+// 1. [CLIENT RECEIVES PROMPT TO ENTER MESSAGE] var botResponse = res.choices[0].message.content;
+// 2. [CLIENT RECEIVES BOT RESPONSE] console.log("[+] [CLI] Chatbot Response:\n ", botResponse)
 
-// #5 - TO RUN: [TERMINAL] npm run dev
-// #3- TO POST ONLINE: ngrok http 3000
-// --> INIT [dotenv] by calling the config() function
-// SWITCH body[model] TO "gpt-4o" FOR BETTER RESPONSES or "gpt-3.5-turbo" for cheaper responses
+import {
+    userName,
+    chatHistory,
+    userInput,
+    completionText,
+    messagesArr,
+    botResp,
+    clientResp,
+    main,
+    getBotResponse,
+
+} from './api_worker.js';
+
+console.log('[+] Script.js loaded successfully!' + "\n [USERNAME]" + userName + "\n[CHAT HISTORY] =" + chatHistory +
+    "\n[USER INPUT]" + userInput + "\n[COMPLETION TEXT]" + completionText + "\n[MESSAGE ARRAY]" + messagesArr);
 
 
-// *INITIALIZE THE OPENAI API WITH THE API KEY USING THE CONFIGURATION FUNCTION FROM OPENAI
-const api_key = process.env.API_KEY;
-const OPEN_AI = new OpenAIApi(new Configuration({ apiKey: api_key }));
+if (document.readyState !== 'loading') {
+    console.log('document is already ready, just execute code here');
+    // botResp();
+    // clientResp();
 
-
-async function main() {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: "You are a helpful assistant." }],
-    model: "gpt-4o",
-  });
-
-  console.log(completion.choices[0]);
+} else {
+    document.addEventListener('DOMContentLoaded', function () {
+        // botResp();
+        // clientResp();
+        console.log('document was not ready, place code here');
+    });
 }
 
 
 
-////////////////////////// 1.0 - Basic Chatbot DOM / DATA-UI PERSISTENCE //////////////////////////
-// *initialize the function "init" when the page completely loads, then calls a listener for the
-// *send button and the message input
-// *When the send button is clicked, it calls the sendMessage function
-// *When the user presses the [Enter] key, it calls the sendMessage function
-// *The sendMessage function gets the message from the input field
-// *If the message is empty, it returns
-// *Calls the IFACEmsgUpdater function to display the user message
 document.addEventListener('DOMContentLoaded', () => {
+
+    console.log('[+] DOMContentLoaded, [EVENT LISTENER] added to [DOCUMENT] ');
 
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     const chatMessages = document.getElementById('chat-messages');
 
-    sendButton.addEventListener('click', parseMsg);
+    sendButton.addEventListener('click', parseMsg, (res) => {
+        console.log('[!]Send button clicked');
+        parseMsg();
+    });
+
     messageInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
+            console.log('[!]Enter key pressed');
             parseMsg();
         }
     });
@@ -60,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     * */
 
     function parseMsg() {
+        console.log('[+] parseMsg() called');
         const messageText = messageInput.value.trim();
         if (messageText === '') return;
 
@@ -95,10 +99,4 @@ document.addEventListener('DOMContentLoaded', () => {
         return responses[lowerCaseMessage] || "I'm sorry, I don't understand that.";
     }
 });
-
-main();
-config();
-
-console.log("Hello World");
-console.log(process.env.API_KEY);
 
